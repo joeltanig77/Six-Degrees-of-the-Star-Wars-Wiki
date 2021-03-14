@@ -1,9 +1,10 @@
-from bs4 import BeautifulSoup #Parsing HTML
-import re #Regular expressions
-import requests #Fetching pages
-from collections import deque #Free queue structure
+from bs4 import BeautifulSoup  # Parsing HTML
+import re  # Regular expressions
+import requests  # Fetching pages
+from collections import deque  # Free queue structure
 
 
+wikiFormat = "https://en.wikipedia.org"
 
 def get_random_page_url():
     r = requests.get('https://en.wikipedia.org/wiki/Special:Random')
@@ -12,33 +13,40 @@ def get_random_page_url():
 
 def internal_not_special(href):
     if href:
-        if re.compile('ˆ/wiki/').search(href):
+        if re.compile('^/wiki/').search(href):
             if not re.compile('/\w+:').search(href):
                 if not re.compile('#').search(href):
                     return True
     return False
 
+
+
 def skimPage():
     url = requests.get(get_random_page_url())
-    beautifulSoup = BeautifulSoup(url.text,'html.parser')
+    beautifulSoup = BeautifulSoup(url.text, 'html.parser')
     pageTitle = beautifulSoup.find("h1", id="firstHeading").string
     print(pageTitle)
     mainContent = beautifulSoup.find(id="bodyContent")
-    #Let us now look for links
-    #print(mainContent)
+    # Let us now look for links
     findValidLinks(mainContent)
-
 
 
 def findValidLinks(mainContent):
     validLinks = mainContent.find_all('a', href=internal_not_special)
-    print(validLinks)
+    for i in range(len(validLinks)):
+        tempLink = validLinks[i].get("href")
+        finalLink = wikiFormat + tempLink
+        print(finalLink)
+        finalLink = ""
+
+
+
+
 
 
 def main():
     skimPage()
     return None
-
 
 
 # Press the green button in the gutter to run the script.
