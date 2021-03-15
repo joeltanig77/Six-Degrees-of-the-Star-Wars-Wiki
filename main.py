@@ -22,57 +22,43 @@ def internal_not_special(href):
 
 #For every link call it again
 
-def skimPage():
-    url = requests.get(get_random_page_url())
+
+def findValidLinks(url):
+    d = deque()
+    url = requests.get(url)
     beautifulSoup = BeautifulSoup(url.text, 'html.parser')
     pageTitle = beautifulSoup.find("h1", id="firstHeading").string
     print(pageTitle)
     mainContent = beautifulSoup.find(id="bodyContent")
     # Let us now look for links
-    findValidLinks(mainContent)
-
-
-
-def findValidLinks(mainContent):
     linkLists = []
     validLinks = mainContent.find_all('a', href=internal_not_special)
     for i in range(len(validLinks)):
         tempLink = validLinks[i].get("href")
         finalLink = wikiFormat + tempLink
-        #print(finalLink)
+        if (finalLink == 'https://en.wikipedia.org/wiki/Star_Wars'):
+            return
         if finalLink in linkLists:
             continue
         linkLists.append(finalLink)
 
-
     for i in range(len(linkLists)):
         print(linkLists[i])
-
-    randomLink = pickRandomLink(linkLists)
-    print(randomLink)
-    if(randomLink == 'https://en.wikipedia.org/wiki/Star_Wars'):
-        return
-    return(randomLink)
+        d.appendleft(linkLists[i])
 
 
 
 
-
-def pickRandomLink(linkLists):
-    print("\n The random link I picked is ")
-    return random.choice((linkLists))
 
 
 
 
 
 def main():
-    skimPage()
+    findValidLinks(get_random_page_url())
     return None
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
