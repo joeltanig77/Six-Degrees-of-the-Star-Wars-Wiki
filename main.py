@@ -113,6 +113,9 @@ def didNotFind():
 def main():
     randURL = get_random_page_url()
     endURL = "https://en.wikipedia.org/wiki/Star_Wars"
+    if randURL == endURL:
+        print("You somehow got Star Wars as your Random Page, buy a lottery ticket or something!")
+        exit(0)
     store.setEndURL(endURL)
     store.setStartUrl(randURL)
     bfs(randURL)
